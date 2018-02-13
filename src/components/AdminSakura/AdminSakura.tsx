@@ -15,6 +15,11 @@ interface AdminStateState {
   message?: string;
 }
 
+const columns: Column<Sakura>[] = [
+  {key: 'id', title: 'ID', format: (t) => t.id},
+  {key: 'title', title: 'Title', format: (t) => t.title},
+];
+
 export class App extends React.Component<{}, AdminStateState> {
 
   constructor(props: {}) {
@@ -35,12 +40,6 @@ export class App extends React.Component<{}, AdminStateState> {
   }
 
   render() {
-
-    const columns: Column<Sakura>[] = [
-      {key: 'id', title: 'ID', format: (t) => t.id},
-      {key: 'title', title: 'Title', format: (t) => t.title},
-    ];
-
     return (
       <div className="App">
         {this.state.sakuras && (
@@ -49,4 +48,5 @@ export class App extends React.Component<{}, AdminStateState> {
       </div>
     );
   }
+
 }
