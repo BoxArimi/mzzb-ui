@@ -1,4 +1,5 @@
 import request from './request'
+import * as md5 from 'md5'
 
 export interface Model {
   id: number
@@ -52,4 +53,22 @@ export class Manager<T extends Model> {
     return this.request(`${this.path}/${t.id}`, {method: 'post', body: JSON.stringify(t)})
   }
 
+}
+
+export const loginManager = {
+  check() {
+    return request('/api/session')
+  },
+  login(username: string, password: string) {
+    password = md5(username + md5(password))
+    return request('/api/session', {
+      method: 'post',
+      body: JSON.stringify({username, password}),
+    })
+  },
+  logout() {
+    return request('/api/session', {
+      method: 'delete',
+    })
+  },
 }
