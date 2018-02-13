@@ -1,9 +1,11 @@
+@import "../../global";
+
 .table-root {
   .table-title {
     font-size: 24px;
     padding: 12px;
   }
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: $mobile-max-width) {
     .table > thead > tr > th,
     .table > tbody > tr > th,
     .table > tfoot > tr > th,
