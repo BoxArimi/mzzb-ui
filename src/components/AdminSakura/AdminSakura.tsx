@@ -20,7 +20,7 @@ const columns: Column<Sakura>[] = [
   {key: 'title', title: 'Title', format: (t) => t.title},
 ];
 
-export class App extends React.Component<{}, AdminStateState> {
+export class AdminSakura extends React.Component<{}, AdminStateState> {
 
   constructor(props: {}) {
     super(props);
