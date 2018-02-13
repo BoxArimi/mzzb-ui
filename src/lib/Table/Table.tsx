@@ -1,6 +1,6 @@
 import * as React from 'react';
 import './Table.css';
-import { Model } from '../utils/manager';
+import { Model } from '../../utils/manager';
 
 export interface Column<T> {
   key: string;
@@ -14,7 +14,7 @@ interface TableProps<T> {
   columns: Column<T>[];
 }
 
-class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
+export class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
 
   constructor(props: TableProps<T>) {
     super(props);
@@ -49,5 +49,3 @@ class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
   }
 
 }
-
-export default Table;
