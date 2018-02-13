@@ -2,6 +2,7 @@ import * as React from 'react'
 import './AdminSakura.css'
 import { Column, Table } from '../../lib'
 import { Manager, Model } from '../../utils/manager'
+import produce from 'immer'
 
 interface Sakura extends Model {
   key: string
@@ -28,15 +29,16 @@ export class AdminSakura extends React.Component<{}, AdminStateState> {
     this.state = {}
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const manager: Manager<Sakura> = new Manager('/api/sakuras')
-    manager.findAll('discColumns=id,title').then(result => {
+    const result = await manager.findAll('discColumns=id,title')
+    this.setState(produce(this.state, (draft: AdminStateState) => {
       if (result.success) {
-        this.setState({sakuras: result.data})
+        draft.sakuras = result.data
       } else {
-        this.setState({message: result.message})
+        draft.message = result.message
       }
-    })
+    }))
   }
 
   render() {
