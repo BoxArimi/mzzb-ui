@@ -1,36 +1,46 @@
 import * as React from 'react';
 import './App.css';
-import { Manager, ManagerImpl } from './utils/manager';
+import { Manager, Model } from './utils/manager';
 
-const logo = require('./logo.svg');
-
-interface Sakura {
-  id: number;
+interface Sakura extends Model {
   key: string;
   title: string;
   enabled: boolean;
   sakuraUpdateDate: number;
 }
 
-class App extends React.Component {
+interface AppState {
+  sakuras?: Sakura[];
+  message?: string;
+}
+
+class App extends React.Component<{}, AppState> {
+
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {};
+  }
 
   componentDidMount() {
-    const manager: Manager<Sakura[]> = new ManagerImpl('/api/sakuras');
-    manager.findAll('discColumns=id,title').then(sakuras => {
-      this.setState({sakuras: sakuras});
+    const manager: Manager<Sakura> = new Manager('/api/sakuras');
+    manager.findAll('discColumns=id,title').then(result => {
+      if (result.success) {
+        this.setState({sakuras: result.data});
+      } else {
+        this.setState({message: result.message});
+      }
     });
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo"/>
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
+        {this.state.sakuras && (
+          this.state.sakuras.map(sakura => (
+            <div>{sakura.title}</div>
+          ))
+        )}
       </div>
     );
   }
