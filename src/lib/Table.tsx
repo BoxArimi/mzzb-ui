@@ -26,7 +26,7 @@ class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
         <div className="table-title">
           {this.props.title}
         </div>
-        <table className="table table-striped table-bordered">
+        <table className="table table-striped table-bordered table-hover">
           <thead>
           <tr>
             {this.props.columns.map(c => (
