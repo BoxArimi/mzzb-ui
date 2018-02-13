@@ -1,17 +1,17 @@
-import * as React from 'react';
-import './Table.css';
-import { Model } from '../../utils/manager';
+import * as React from 'react'
+import './Table.css'
+import { Model } from '../../utils/manager'
 
 export interface Column<T> {
-  key: string;
-  title: string;
-  format: (t: T) => React.ReactNode;
+  key: string
+  title: string
+  format: (t: T) => React.ReactNode
 }
 
 interface TableProps<T> {
-  title: string;
-  rows: T[];
-  columns: Column<T>[];
+  title: string
+  rows: T[]
+  columns: Column<T>[]
 }
 
 export class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
@@ -41,7 +41,7 @@ export class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
           </tbody>
         </table>
       </div>
-    );
+    )
   }
 
 }

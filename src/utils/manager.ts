@@ -1,55 +1,55 @@
-import request from './request';
+import request from './request'
 
 export interface Model {
-  id: number;
+  id: number
 }
 
 type RightResult<T> = {
-  success: true;
-  data: T;
-};
+  success: true
+  data: T
+}
 
 type ErrorResult = {
-  success: false;
-  message: string;
-};
+  success: false
+  message: string
+}
 
-export type Result<T> = RightResult<T> | ErrorResult;
+export type Result<T> = RightResult<T> | ErrorResult
 
 export class Manager<T extends Model> {
 
-  private path: string;
+  private path: string
 
   constructor(path: string) {
-    this.path = path;
+    this.path = path
   }
 
   request(path: string, init?: RequestInit) {
-    return request(path, init);
+    return request(path, init)
   }
 
   findAll(query?: string): Promise<Result<T[]>> {
     if (query) {
-      return this.request(`${this.path}?${query}`);
+      return this.request(`${this.path}?${query}`)
     } else {
-      return this.request(this.path);
+      return this.request(this.path)
     }
   }
 
   getOne(id: number): Promise<Result<T>> {
-    return this.request(`${this.path}/${id}`);
+    return this.request(`${this.path}/${id}`)
   }
 
   addOne(t: T): Promise<Result<T>> {
-    return this.request(this.path, {method: 'post', body: JSON.stringify(t)});
+    return this.request(this.path, {method: 'post', body: JSON.stringify(t)})
   }
 
   delOne(id: number): Promise<Result<T>> {
-    return this.request(`${this.path}/${id}`, {method: 'delete'});
+    return this.request(`${this.path}/${id}`, {method: 'delete'})
   }
 
   update(t: T): Promise<Result<T>> {
-    return this.request(`${this.path}/${t.id}`, {method: 'post', body: JSON.stringify(t)});
+    return this.request(`${this.path}/${t.id}`, {method: 'post', body: JSON.stringify(t)})
   }
 
 }

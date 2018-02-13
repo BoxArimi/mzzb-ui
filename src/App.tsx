@@ -1,25 +1,25 @@
-import * as React from 'react';
-import './App.css';
-import { Icon, Layout } from 'antd';
-import { AdminSakura } from './components';
+import * as React from 'react'
+import './App.css'
+import { Icon, Layout } from 'antd'
+import { AdminSakura } from './components'
 
 interface AppState {
-  collapsed: boolean;
+  collapsed: boolean
 }
 
 class App extends React.Component<{}, AppState> {
 
   constructor(props: {}) {
-    super(props);
+    super(props)
 
     this.state = {
       collapsed: false
-    };
+    }
   }
 
   onCollapse = (collapsed: boolean, type: 'clickTrigger' | 'responsive') => {
     if (type === 'responsive') {
-      this.setState({...this.state, collapsed});
+      this.setState({...this.state, collapsed})
     }
   }
 
@@ -60,9 +60,9 @@ class App extends React.Component<{}, AppState> {
           </Layout>
         </Layout>
       </div>
-    );
+    )
   }
 
 }
 
-export default App;
+export default App
