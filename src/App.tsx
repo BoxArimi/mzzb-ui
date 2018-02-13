@@ -4,10 +4,6 @@ import { AdminSakura } from './components';
 
 class App extends React.Component<{}, {}> {
 
-  constructor(props: {}) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="App-root">
@@ -15,6 +11,7 @@ class App extends React.Component<{}, {}> {
       </div>
     );
   }
+  
 }
 
 export default App;

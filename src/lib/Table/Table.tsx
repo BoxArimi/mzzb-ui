@@ -16,10 +16,6 @@ interface TableProps<T> {
 
 export class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
 
-  constructor(props: TableProps<T>) {
-    super(props);
-  }
-
   render() {
     return (
       <div className="table-root">
