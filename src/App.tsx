@@ -1,10 +1,12 @@
 import * as React from 'react'
 import './App.css'
-import { Icon, Layout } from 'antd'
 import { AdminSakura } from './components'
+import { Layout, Popconfirm } from 'antd'
+import { Icon } from './lib'
 
 interface AppState {
   collapsed: boolean
+  isLogged: boolean
 }
 
 class App extends React.Component<{}, AppState> {
@@ -13,7 +15,7 @@ class App extends React.Component<{}, AppState> {
     super(props)
 
     this.state = {
-      collapsed: false
+      collapsed: false, isLogged: false
     }
   }
 
@@ -46,6 +48,24 @@ class App extends React.Component<{}, AppState> {
                 onClick={() => this.setState({...this.state, collapsed: !this.state.collapsed})}
                 type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
               />
+              {this.state.isLogged ? (
+                <Popconfirm
+                  title="你确定要登出吗？"
+                  placement="bottomRight"
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Icon
+                    className="header-icon float-right"
+                    type="icon-user"
+                  />
+                </Popconfirm>
+              ) : (
+                <Icon
+                  className="header-icon float-right"
+                  type="icon-login"
+                />
+              )}
             </Layout.Header>
             <Layout.Content
               className="app-content"
