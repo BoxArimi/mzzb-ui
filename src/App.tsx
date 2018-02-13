@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './App.css';
 import { Manager, Model } from './utils/manager';
+import Table, { Column } from './lib/Table';
 
 interface Sakura extends Model {
   key: string;
@@ -34,12 +35,16 @@ class App extends React.Component<{}, AppState> {
   }
 
   render() {
+
+    const columns: Column<Sakura>[] = [
+      {key: 'id', title: 'ID', format: (t) => t.id},
+      {key: 'title', title: 'Title', format: (t) => t.title},
+    ];
+
     return (
       <div className="App">
         {this.state.sakuras && (
-          this.state.sakuras.map(sakura => (
-            <div>{sakura.title}</div>
-          ))
+          <Table title="sakura list" rows={this.state.sakuras} columns={columns}/>
         )}
       </div>
     );
