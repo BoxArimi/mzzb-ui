@@ -4,14 +4,20 @@ import { AdminSakura } from './components'
 import { Input, Layout, Modal, Popconfirm } from 'antd'
 import { CollapseType } from 'antd/lib/layout/Sider'
 import { Icon } from './lib'
-import { loginManager } from './utils/manager'
+import { loginManager, Result } from './utils/manager'
 import produce from 'immer'
+
+interface Session {
+  userName: string
+  isLogged: boolean
+  userRoles: string[]
+}
 
 interface AppState {
   viewSider: boolean
   viewModel: boolean
   submiting: boolean
-  isLogged: boolean
+  session: Session
 }
 
 class App extends React.Component<{}, AppState> {
@@ -23,7 +29,11 @@ class App extends React.Component<{}, AppState> {
       viewSider: false,
       viewModel: false,
       submiting: false,
-      isLogged: false,
+      session: {
+        isLogged: false,
+        userName: 'Guest',
+        userRoles: [],
+      },
     }
   }
 
@@ -36,10 +46,14 @@ class App extends React.Component<{}, AppState> {
   }
 
   submitLogout = async () => {
-    await loginManager.logout()
-    this.setState(produce(this.state, (draft: AppState) => {
-      draft.isLogged = false
-    }))
+    const result: Result<Session> = await loginManager.logout()
+    if (result.success) {
+      this.setState(produce(this.state, (draft: AppState) => {
+        draft.session = result.data
+      }))
+    } else {
+      Modal.error({title: '登出异常', content: result.message})
+    }
   }
 
   showLogin = () => {
@@ -54,18 +68,24 @@ class App extends React.Component<{}, AppState> {
 
     if (!username || !password) {
       Modal.warning({title: '请检查输入项', content: '你必须输入用户名和密码'})
-    } else {
-      this.setState(produce(this.state, (draft: AppState) => {
-        draft.submiting = true
-      }))
-      const json = await loginManager.login(username, password)
-      this.setState(produce(this.state, (draft: AppState) => {
-        draft.isLogged = json.success
-        draft.submiting = false
-        draft.viewModel = false
-      }))
+      return
     }
 
+    this.setState(produce(this.state, (draft: AppState) => {
+      draft.submiting = true
+    }))
+
+    const result: Result<Session> = await loginManager.login(username, password)
+    this.setState(produce(this.state, (draft: AppState) => {
+      if (result.success) {
+        draft.session = result.data
+        draft.submiting = false
+        draft.viewModel = false
+      } else {
+        draft.submiting = false
+        Modal.error({title: '登入异常', content: result.message})
+      }
+    }))
   }
 
   hideLogin = () => {
@@ -75,10 +95,14 @@ class App extends React.Component<{}, AppState> {
   }
 
   async componentDidMount() {
-    const json = await loginManager.check()
-    this.setState(produce(this.state, (draft: AppState) => {
-      draft.isLogged = json.success
-    }))
+    const result: Result<Session> = await loginManager.check()
+    if (result.success) {
+      this.setState(produce(this.state, (draft: AppState) => {
+        draft.session = result.data
+      }))
+    } else {
+      Modal.error({title: '获取当前登入状态异常', content: result.message})
+    }
   }
 
   render() {
@@ -104,7 +128,7 @@ class App extends React.Component<{}, AppState> {
                 onClick={() => this.setState({...this.state, viewSider: !this.state.viewSider})}
                 type={this.state.viewSider ? 'menu-unfold' : 'menu-fold'}
               />
-              {this.state.isLogged ? (
+              {this.state.session.isLogged ? (
                 <Popconfirm
                   title="你确定要登出吗？"
                   placement="bottomRight"
