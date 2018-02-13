@@ -5,6 +5,7 @@ import { Input, Layout, Modal, Popconfirm } from 'antd'
 import { CollapseType } from 'antd/lib/layout/Sider'
 import { Icon } from './lib'
 import { loginManager } from './utils/manager'
+import produce from 'immer'
 
 interface AppState {
   viewSider: boolean
@@ -28,57 +29,56 @@ class App extends React.Component<{}, AppState> {
 
   onCollapse = (viewSider: boolean, type: CollapseType) => {
     if (type === 'responsive') {
-      this.setState({...this.state, viewSider})
+      this.setState(produce(this.state, (draft: AppState) => {
+        draft.viewSider = viewSider
+      }))
     }
   }
 
-  submitLogout = () => {
-    loginManager.logout()
-      .then(json => {
-        this.setState({...this.state, isLogged: false})
-      })
+  submitLogout = async () => {
+    await loginManager.logout()
+    this.setState(produce(this.state, (draft: AppState) => {
+      draft.isLogged = false
+    }))
   }
 
   showLogin = () => {
-    this.setState({...this.state, viewModel: true})
+    this.setState(produce(this.state, (draft: AppState) => {
+      draft.viewModel = true
+    }))
   }
 
-  submitLogin = () => {
+  submitLogin = async () => {
     const username = (document.querySelector('#login-username') as HTMLInputElement).value
     const password = (document.querySelector('#login-password') as HTMLInputElement).value
 
     if (!username || !password) {
       Modal.warning({title: '请检查输入项', content: '你必须输入用户名和密码'})
     } else {
-      this.setState({...this.state, submiting: true})
-      loginManager.login(username, password)
-        .then(json => {
-          if (json.success) {
-            this.setState((prevState, props) => {
-              return {...prevState, isLogged: true}
-            })
-          } else {
-            this.setState((prevState, props) => {
-              return {...prevState, isLogged: false}
-            })
-          }
-          this.setState((prevState, props) => {
-            return {...prevState, submiting: false, viewModel: false}
-          })
-        })
+      this.setState(produce(this.state, (draft: AppState) => {
+        draft.submiting = true
+      }))
+      const json = await loginManager.login(username, password)
+      this.setState(produce(this.state, (draft: AppState) => {
+        draft.isLogged = json.success
+        draft.submiting = false
+        draft.viewModel = false
+      }))
     }
 
   }
 
   hideLogin = () => {
-    this.setState({...this.state, viewModel: false})
+    this.setState(produce(this.state, (draft: AppState) => {
+      draft.viewModel = false
+    }))
   }
 
-  componentDidMount() {
-    loginManager.check()
-      .then(json => {
-        this.setState({...this.state, isLogged: json.success})
-      })
+  async componentDidMount() {
+    const json = await loginManager.check()
+    this.setState(produce(this.state, (draft: AppState) => {
+      draft.isLogged = json.success
+    }))
   }
 
   render() {
