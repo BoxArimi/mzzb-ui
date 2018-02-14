@@ -5,6 +5,7 @@ import './App.css'
 import { loginManager, Result } from './utils/manager'
 import * as Loadable from 'react-loadable'
 import produce from 'immer'
+import * as PropTypes from 'prop-types'
 
 export interface Session {
   userName: string
@@ -12,11 +13,17 @@ export interface Session {
   userRoles: string[]
 }
 
+export interface Reload {
+  handle: () => void
+  pending: boolean
+}
+
 export interface AppState {
   viewSider: boolean
   viewModal: boolean
   submiting: boolean
   session: Session
+  reload?: Reload
 }
 
 export interface AppContext {
@@ -45,6 +52,10 @@ const AsyncAppFooter = async(() => import('./layouts/app-footer'))
 
 class App extends React.Component<{}, AppState> {
 
+  static childContextTypes = {
+    update: PropTypes.func.isRequired
+  }
+
   constructor(props: {}) {
     super(props)
 
@@ -62,6 +73,10 @@ class App extends React.Component<{}, AppState> {
 
   update = (reducer: (state: AppState) => AppState) => {
     this.setState(reducer(this.state))
+  }
+
+  getChildContext() {
+    return {update: this.update}
   }
 
   async componentDidMount() {

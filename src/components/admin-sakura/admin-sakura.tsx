@@ -3,11 +3,12 @@ import { Alert } from 'antd'
 import Table, { Column } from '../../lib/table'
 import './admin-sakura.css'
 
-import { Manager, Model } from '../../utils/manager'
+import { Manager, Model, Result } from '../../utils/manager'
 import produce from 'immer'
+import { AppState } from '../../App'
+import * as PropTypes from 'prop-types'
 
-interface Sakura extends Model {
-  id: number
+interface AdminSakuraModel extends Model {
   key: string
   title: string
   enabled: boolean
@@ -15,7 +16,7 @@ interface Sakura extends Model {
 }
 
 interface AdminStateState {
-  sakuras?: Sakura[]
+  sakuras?: AdminSakuraModel[]
   message?: string
 }
 
@@ -27,7 +28,7 @@ const formatTime = (sakuraUpdateDate: number) => {
   return `${hour}时${minute}分前`
 }
 
-const columns: Column<Sakura>[] = [
+const columns: Column<AdminSakuraModel>[] = [
   {key: 'id', title: '#', format: (t) => t.id},
   {key: 'key', title: 'Key', format: (t) => t.key},
   {key: 'title', title: '标题', format: (t) => t.title},
@@ -37,15 +38,29 @@ const columns: Column<Sakura>[] = [
 
 export class AdminSakura extends React.Component<{}, AdminStateState> {
 
+  static contextTypes = {
+    update: PropTypes.func.isRequired,
+  }
+
+  manager: Manager<AdminSakuraModel> = new Manager('/api/admin/sakuras')
+
   constructor(props: {}) {
     super(props)
 
     this.state = {}
   }
 
-  async componentDidMount() {
-    const manager: Manager<Sakura> = new Manager('/api/admin/sakuras')
-    const result = await manager.findAll()
+  listAdminSakuras = async (): Promise<void> => {
+    this.context.update((state: AppState) => produce(state, (draft: AppState) => {
+      draft.reload = {pending: true, handle: this.listAdminSakuras}
+    }))
+
+    const result: Result<AdminSakuraModel[]> = await this.manager.findAll()
+
+    this.context.update((state: AppState) => produce(state, (draft: AppState) => {
+      draft.reload!.pending = false
+    }))
+
     this.setState(produce(this.state, (draft: AdminStateState) => {
       if (result.success) {
         draft.sakuras = result.data
@@ -53,6 +68,10 @@ export class AdminSakura extends React.Component<{}, AdminStateState> {
         draft.message = result.message
       }
     }))
+  }
+
+  async componentDidMount() {
+    await this.listAdminSakuras()
   }
 
   render() {

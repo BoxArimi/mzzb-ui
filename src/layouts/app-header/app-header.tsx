@@ -39,6 +39,13 @@ export class AppHeader extends React.Component<AppContext, {}> {
           onClick={this.toggleSider}
           type={this.props.state.viewSider ? 'menu-unfold' : 'menu-fold'}
         />
+        {this.props.state.reload && (
+          <Icon
+            className="header-icon"
+            type={this.props.state.reload.pending ? 'loading' : 'reload'}
+            onClick={this.props.state.reload.handle}
+          />
+        )}
         {this.props.state.session.isLogged ? (
           <Popconfirm
             title="你确定要登出吗？"
