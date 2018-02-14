@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Input, Layout, Modal } from 'antd'
+import { Input, Layout, message, Modal } from 'antd'
 import Icon from '../../lib/icon'
 
 import { AppState, default as App } from '../../App'
@@ -23,11 +23,18 @@ export class AppFooter extends React.Component<{}, {}> {
     })
 
     const result = await loginManager.login(username, password)
+
     this.context.update((draft: AppState) => {
       if (result.success) {
         draft.session = result.data
         draft.submiting = false
         draft.viewModal = false
+        if (draft.session.isLogged) {
+          message.success(`您已成功登入`)
+          if (draft.reload) {
+            draft.reload.handle()
+          }
+        }
       } else {
         draft.submiting = false
         Modal.error({title: '登入异常', content: result.message})
