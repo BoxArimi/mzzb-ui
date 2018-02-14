@@ -14,7 +14,7 @@ interface AdminSakuraModel extends Model {
   sakuraUpdateDate: number
 }
 
-interface AdminStateState {
+interface AdminSakuraState {
   sakuras?: AdminSakuraModel[]
   message?: string
 }
@@ -35,7 +35,7 @@ const columns: Column<AdminSakuraModel>[] = [
   {key: 'sakuraUpdateDate', title: '上次更新', format: (t) => formatTime(t.sakuraUpdateDate)},
 ]
 
-export class AdminSakura extends React.Component<{}, AdminStateState> {
+export class AdminSakura extends React.Component<{}, AdminSakuraState> {
 
   static contextTypes = App.childContextTypes
 
@@ -45,6 +45,10 @@ export class AdminSakura extends React.Component<{}, AdminStateState> {
     super(props)
 
     this.state = {}
+  }
+
+  update = (reducer: (draft: AdminSakuraState) => void) => {
+    this.setState(produce(this.state, reducer))
   }
 
   listAdminSakuras = async (): Promise<void> => {
@@ -58,13 +62,14 @@ export class AdminSakura extends React.Component<{}, AdminStateState> {
       draft.reload!.pending = false
     })
 
-    this.setState(produce(this.state, (draft: AdminStateState) => {
+    this.update(draft => {
       if (result.success) {
         draft.sakuras = result.data
+        draft.message = undefined
       } else {
         draft.message = result.message
       }
-    }))
+    })
   }
 
   async componentDidMount() {

@@ -74,13 +74,13 @@ class App extends React.Component<{}, AppState> {
 
   async componentDidMount() {
     const result: Result<Session> = await loginManager.check()
-    if (result.success) {
-      this.setState(produce(this.state, (draft: AppState) => {
+    this.update(draft => {
+      if (result.success) {
         draft.session = result.data
-      }))
-    } else {
-      Modal.error({title: '获取当前登入状态异常', content: result.message})
-    }
+      } else {
+        Modal.error({title: '获取当前登入状态异常', content: result.message})
+      }
+    })
   }
 
   render() {
