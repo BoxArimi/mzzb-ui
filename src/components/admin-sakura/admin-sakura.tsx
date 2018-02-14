@@ -82,7 +82,7 @@ export class AdminSakura extends React.Component<{}, AdminSakuraState> {
 
   render() {
     return (
-      <div className="App">
+      <div className="admin-sakura">
         {this.state.message && (
           <Alert message={this.state.message} type="error"/>
         )}
