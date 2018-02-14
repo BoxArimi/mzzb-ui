@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { Input, Modal } from 'antd'
 import { Icon } from '../../lib'
+
 import { AppContext, AppState, Session } from '../../App'
-import produce from 'immer'
 import { loginManager, Result } from '../../utils/manager'
+import produce from 'immer'
 
 export class LoginModal extends React.Component<AppContext, {}> {
 

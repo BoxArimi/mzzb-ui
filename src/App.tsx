@@ -1,13 +1,12 @@
 import * as React from 'react'
-import produce from 'immer'
-import './App.css'
-
-import { Layout, Modal, Popconfirm } from 'antd'
+import { Layout, Modal } from 'antd'
 import { Icon } from './lib'
+import './App.css'
 
 import { CollapseType } from 'antd/lib/layout/Sider'
 import { loginManager, Result } from './utils/manager'
 import * as Loadable from 'react-loadable'
+import produce from 'immer'
 
 export interface Session {
   userName: string
@@ -31,6 +30,17 @@ const AsyncLoginModal = Loadable.Map({
   loading: () => null,
   loader: {
     Component: () => import('./components/login-modal'),
+  },
+  render(loaded: any, props: AppContext) {
+    const Component = loaded.Component.default
+    return <Component {...props} />
+  }
+})
+
+const AsyncConfirmLogout = Loadable.Map({
+  loading: () => null,
+  loader: {
+    Component: () => import('./components/confirm-logout'),
   },
   render(loaded: any, props: AppContext) {
     const Component = loaded.Component.default
@@ -63,17 +73,6 @@ class App extends React.Component<{}, AppState> {
     }
   }
 
-  submitLogout = async () => {
-    const result: Result<Session> = await loginManager.logout()
-    if (result.success) {
-      this.setState(produce(this.state, (draft: AppState) => {
-        draft.session = result.data
-      }))
-    } else {
-      Modal.error({title: '登出异常', content: result.message})
-    }
-  }
-
   showLogin = () => {
     this.setState(produce(this.state, (draft: AppState) => {
       draft.viewModal = true
@@ -91,6 +90,7 @@ class App extends React.Component<{}, AppState> {
     }
 
     AsyncLoginModal.preload()
+    AsyncConfirmLogout.preload()
   }
 
   render() {
@@ -117,18 +117,10 @@ class App extends React.Component<{}, AppState> {
                 type={this.state.viewSider ? 'menu-unfold' : 'menu-fold'}
               />
               {this.state.session.isLogged ? (
-                <Popconfirm
-                  title="你确定要登出吗？"
-                  placement="bottomRight"
-                  okText="Yes"
-                  cancelText="No"
-                  onConfirm={this.submitLogout}
-                >
-                  <Icon
-                    className="header-icon float-right"
-                    type="icon-user"
-                  />
-                </Popconfirm>
+                <AsyncConfirmLogout
+                  state={this.state}
+                  update={(reducer) => this.setState(reducer(this.state))}
+                />
               ) : (
                 <Icon
                   className="header-icon float-right"
