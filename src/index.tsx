@@ -1,21 +1,11 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
-import * as Loadable from 'react-loadable'
 import './index.css'
 import registerServiceWorker from './registerServiceWorker'
 
 import App from './App'
-import Loading from './components/loading'
-
-const async = (loader: () => any) => {
-  return Loadable({
-    loader: loader,
-    loading: Loading,
-    delay: 300,
-    timeout: 5000,
-  })
-}
+import { async } from './components/loading'
 
 ReactDOM.render(
   <BrowserRouter>
