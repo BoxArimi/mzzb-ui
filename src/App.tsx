@@ -62,7 +62,7 @@ class App extends React.Component<{}, AppState> {
   }
 
   update = (reducer: (draft: AppState) => void) => {
-    this.setState(produce(this.state, reducer))
+    this.setState((prevState => produce(prevState, reducer)))
   }
 
   getChildContext() {

@@ -48,19 +48,15 @@ export class AdminSakura extends React.Component<{}, AdminSakuraState> {
   }
 
   update = (reducer: (draft: AdminSakuraState) => void) => {
-    this.setState(produce(this.state, reducer))
+    this.setState((prevState => produce(prevState, reducer)))
   }
 
   listAdminSakuras = async (): Promise<void> => {
     this.context.update((draft: AppState) => {
-      draft.reload = {pending: true, handle: this.listAdminSakuras}
+      draft.reload!.pending = true
     })
 
     const result: Result<AdminSakuraModel[]> = await this.manager.findAll()
-
-    this.context.update((draft: AppState) => {
-      draft.reload!.pending = false
-    })
 
     this.update(draft => {
       if (result.success) {
@@ -70,9 +66,17 @@ export class AdminSakura extends React.Component<{}, AdminSakuraState> {
         draft.message = result.message
       }
     })
+
+    this.context.update((draft: AppState) => {
+      draft.reload!.pending = false
+    })
   }
 
   async componentDidMount() {
+    this.context.update((draft: AppState) => {
+      draft.reload = {pending: true, handle: this.listAdminSakuras}
+    })
+
     await this.listAdminSakuras()
   }
 
