@@ -1,6 +1,8 @@
 import * as React from 'react'
+import { RouteComponentProps } from 'react-router-dom'
 import { Layout, Menu } from 'antd'
 import { CollapseType } from 'antd/lib/layout/Sider'
+import { ClickParam } from 'antd/lib/menu'
 import Icon from '../../lib/icon'
 
 import { AppState, default as App } from '../../App'
@@ -12,7 +14,7 @@ const renderTitle = (route: RouteInfo) => {
   )
 }
 
-export class AppSider extends React.Component<{}, {}> {
+export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
 
   static contextTypes = App.childContextTypes
 
@@ -21,6 +23,14 @@ export class AppSider extends React.Component<{}, {}> {
       this.context.update((draft: AppState) => {
         draft.viewSider = viewSider
       })
+    }
+  }
+
+  onClickItem = ({key}: ClickParam) => {
+    if (key.charAt(0) === '/') {
+      this.props.history.push(key)
+    } else {
+      window.open(key)
     }
   }
 
@@ -36,7 +46,7 @@ export class AppSider extends React.Component<{}, {}> {
           {route.routes.map(renderMenu)}
         </Menu.SubMenu>
       ) : (
-        <Menu.Item key={key}>
+        <Menu.Item key={route.matchPath}>
           {renderTitle(route)}
         </Menu.Item>
       )
@@ -56,8 +66,9 @@ export class AppSider extends React.Component<{}, {}> {
         </div>
         <Menu
           mode="inline"
-          selectedKeys={[document.location.pathname]}
+          selectedKeys={[this.props.location.pathname]}
           style={{height: '100%'}}
+          onClick={this.onClickItem}
         >
           {routes.map(renderMenu)}
         </Menu>
