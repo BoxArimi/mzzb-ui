@@ -2,27 +2,29 @@ import * as React from 'react'
 import { Layout, Modal, Popconfirm } from 'antd'
 import Icon from '../../lib/icon'
 
-import { AppContext, AppState, Session } from '../../App'
-import { loginManager, Result } from '../../utils/manager'
+import { AppState, default as App } from '../../App'
+import { loginManager } from '../../utils/manager'
 
-export class AppHeader extends React.Component<AppContext, {}> {
+export class AppHeader extends React.Component<{}, {}> {
+
+  static contextTypes = App.childContextTypes
 
   toggleSider = () => {
-    this.props.update((draft: AppState) => {
+    this.context.update((draft: AppState) => {
       draft.viewSider = !draft.viewSider
     })
   }
 
   showLogin = () => {
-    this.props.update((draft: AppState) => {
+    this.context.update((draft: AppState) => {
       draft.viewModal = true
     })
   }
 
   submitLogout = async () => {
-    const result: Result<Session> = await loginManager.logout()
+    const result = await loginManager.logout()
     if (result.success) {
-      this.props.update((draft: AppState) => {
+      this.context.update((draft: AppState) => {
         draft.session = result.data
       })
     } else {
@@ -36,16 +38,16 @@ export class AppHeader extends React.Component<AppContext, {}> {
         <Icon
           className="header-icon"
           onClick={this.toggleSider}
-          type={this.props.state.viewSider ? 'menu-unfold' : 'menu-fold'}
+          type={this.context.state.viewSider ? 'menu-unfold' : 'menu-fold'}
         />
-        {this.props.state.reload && (
+        {this.context.state.reload && (
           <Icon
             className="header-icon"
-            type={this.props.state.reload.pending ? 'loading' : 'reload'}
-            onClick={this.props.state.reload.handle}
+            type={this.context.state.reload.pending ? 'loading' : 'reload'}
+            onClick={this.context.state.reload.handle}
           />
         )}
-        {this.props.state.session.isLogged ? (
+        {this.context.state.session.isLogged ? (
           <Popconfirm
             title="你确定要登出吗？"
             placement="bottomRight"

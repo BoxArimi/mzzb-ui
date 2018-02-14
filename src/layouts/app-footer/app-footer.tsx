@@ -2,10 +2,12 @@ import * as React from 'react'
 import { Input, Layout, Modal } from 'antd'
 import Icon from '../../lib/icon'
 
-import { AppContext, AppState, Session } from '../../App'
-import { loginManager, Result } from '../../utils/manager'
+import { AppState, default as App } from '../../App'
+import { loginManager } from '../../utils/manager'
 
-export class AppFooter extends React.Component<AppContext, {}> {
+export class AppFooter extends React.Component<{}, {}> {
+
+  static contextTypes = App.childContextTypes
 
   submitLogin = async () => {
     const username = (document.querySelector('#login-username') as HTMLInputElement).value
@@ -16,12 +18,12 @@ export class AppFooter extends React.Component<AppContext, {}> {
       return
     }
 
-    this.props.update((draft: AppState) => {
+    this.context.update((draft: AppState) => {
       draft.submiting = true
     })
 
-    const result: Result<Session> = await loginManager.login(username, password)
-    this.props.update((draft: AppState) => {
+    const result = await loginManager.login(username, password)
+    this.context.update((draft: AppState) => {
       if (result.success) {
         draft.session = result.data
         draft.submiting = false
@@ -34,7 +36,7 @@ export class AppFooter extends React.Component<AppContext, {}> {
   }
 
   hideLogin = () => {
-    this.props.update((draft: AppState) => {
+    this.context.update((draft: AppState) => {
       draft.viewModal = false
     })
   }
@@ -42,13 +44,13 @@ export class AppFooter extends React.Component<AppContext, {}> {
   render() {
     return (
       <Layout.Footer className="app-footer">
-        {this.props.state.viewModal && (
+        {this.context.state.viewModal && (
           <Modal
             title="用户登入"
             okText="登入"
             cancelText="取消"
-            visible={this.props.state.viewModal}
-            confirmLoading={this.props.state.submiting}
+            visible={this.context.state.viewModal}
+            confirmLoading={this.context.state.submiting}
             onOk={this.submitLogin}
             onCancel={this.hideLogin}
           >

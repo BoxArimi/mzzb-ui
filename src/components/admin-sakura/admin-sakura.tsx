@@ -4,9 +4,8 @@ import Table, { Column } from '../../lib/table'
 import './admin-sakura.css'
 
 import { Manager, Model, Result } from '../../utils/manager'
+import { AppState, default as App } from '../../App'
 import produce from 'immer'
-import { AppState } from '../../App'
-import * as PropTypes from 'prop-types'
 
 interface AdminSakuraModel extends Model {
   key: string
@@ -38,9 +37,7 @@ const columns: Column<AdminSakuraModel>[] = [
 
 export class AdminSakura extends React.Component<{}, AdminStateState> {
 
-  static contextTypes = {
-    update: PropTypes.func.isRequired,
-  }
+  static contextTypes = App.childContextTypes
 
   manager: Manager<AdminSakuraModel> = new Manager('/api/admin/sakuras')
 

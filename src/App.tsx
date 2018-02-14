@@ -1,11 +1,11 @@
 import * as React from 'react'
+import * as PropTypes from 'prop-types'
 import { Layout, Modal } from 'antd'
 import './App.css'
 
 import { loginManager, Result } from './utils/manager'
 import * as Loadable from 'react-loadable'
 import produce from 'immer'
-import * as PropTypes from 'prop-types'
 
 export interface Session {
   userName: string
@@ -26,21 +26,10 @@ export interface AppState {
   reload?: Reload
 }
 
-export interface AppContext {
-  state: AppState
-  update: (reducer: (draft: AppState) => void) => void
-}
-
 const async = (loader: () => any) => {
-  return Loadable.Map({
+  return Loadable({
+    loader: loader,
     loading: () => null,
-    loader: {
-      Component: loader,
-    },
-    render(loaded: any, props: AppContext) {
-      const Component = loaded.Component.default
-      return <Component {...props} />
-    }
   })
 }
 
@@ -53,7 +42,8 @@ const AsyncAppFooter = async(() => import('./layouts/app-footer'))
 class App extends React.Component<{}, AppState> {
 
   static childContextTypes = {
-    update: PropTypes.func.isRequired
+    state: PropTypes.object.isRequired,
+    update: PropTypes.func.isRequired,
   }
 
   constructor(props: {}) {
@@ -76,7 +66,10 @@ class App extends React.Component<{}, AppState> {
   }
 
   getChildContext() {
-    return {update: this.update}
+    return {
+      state: this.state,
+      update: this.update,
+    }
   }
 
   async componentDidMount() {
@@ -94,13 +87,13 @@ class App extends React.Component<{}, AppState> {
     return (
       <div className="app-root">
         <Layout>
-          <AsyncAppSider state={this.state} update={this.update}/>
+          <AsyncAppSider/>
           <Layout>
-            <AsyncAppHeader state={this.state} update={this.update}/>
+            <AsyncAppHeader/>
             <Layout.Content className="app-content">
               {this.props.children}
             </Layout.Content>
-            <AsyncAppFooter state={this.state} update={this.update}/>
+            <AsyncAppFooter/>
           </Layout>
         </Layout>
       </div>

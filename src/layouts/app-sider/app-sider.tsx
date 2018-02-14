@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { Layout, Menu } from 'antd'
+import { CollapseType } from 'antd/lib/layout/Sider'
 import Icon from '../../lib/icon'
 
-import { AppContext, AppState } from '../../App'
-import { CollapseType } from 'antd/lib/layout/Sider'
+import { AppState, default as App } from '../../App'
 import { default as routes, RouteInfo } from '../../common/routes'
 
 const renderTitle = (route: RouteInfo) => {
@@ -12,18 +12,20 @@ const renderTitle = (route: RouteInfo) => {
   )
 }
 
-export class AppSider extends React.Component<AppContext, {}> {
+export class AppSider extends React.Component<{}, {}> {
+
+  static contextTypes = App.childContextTypes
 
   onCollapse = (viewSider: boolean, type: CollapseType) => {
     if (type === 'responsive') {
-      this.props.update((draft: AppState) => {
+      this.context.update((draft: AppState) => {
         draft.viewSider = viewSider
       })
     }
   }
 
   render() {
-    const isAdmin = this.props.state.session.userRoles.indexOf('ROLE_ADMIN') > -1
+    const isAdmin = this.context.state.session.userRoles.indexOf('ROLE_ADMIN') > -1
 
     const renderMenu = (route: RouteInfo, key: number): React.ReactNode => {
       if (route.isAdmin && !isAdmin) {
@@ -43,7 +45,7 @@ export class AppSider extends React.Component<AppContext, {}> {
     return (
       <Layout.Sider
         className="app-sider"
-        collapsed={this.props.state.viewSider}
+        collapsed={this.context.state.viewSider}
         onCollapse={this.onCollapse}
         collapsedWidth={0}
         breakpoint="md"
