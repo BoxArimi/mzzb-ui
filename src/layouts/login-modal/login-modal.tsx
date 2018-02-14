@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Input, Modal } from 'antd'
-import { Icon } from '../../lib'
+import Icon from '../../lib/icon'
 
 import { AppContext, AppState, Session } from '../../App'
 import { loginManager, Result } from '../../utils/manager'

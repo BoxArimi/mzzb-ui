@@ -2,10 +2,10 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom'
 import './index.css'
-import registerServiceWorker from './registerServiceWorker'
 
 import App from './App'
-import { async } from './components/loading'
+import { async } from './lib/loading'
+import registerServiceWorker from './registerServiceWorker'
 
 ReactDOM.render(
   <BrowserRouter>

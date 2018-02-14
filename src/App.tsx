@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { Layout, Modal } from 'antd'
-import { Icon } from './lib'
+import Icon from './lib/icon'
 import './App.css'
 
 import { CollapseType } from 'antd/lib/layout/Sider'
@@ -29,7 +29,7 @@ export interface AppContext {
 const AsyncLoginModal = Loadable.Map({
   loading: () => null,
   loader: {
-    Component: () => import('./components/login-modal'),
+    Component: () => import('./layouts/login-modal'),
   },
   render(loaded: any, props: AppContext) {
     const Component = loaded.Component.default
@@ -40,7 +40,7 @@ const AsyncLoginModal = Loadable.Map({
 const AsyncConfirmLogout = Loadable.Map({
   loading: () => null,
   loader: {
-    Component: () => import('./components/confirm-logout'),
+    Component: () => import('./layouts/confirm-logout'),
   },
   render(loaded: any, props: AppContext) {
     const Component = loaded.Component.default

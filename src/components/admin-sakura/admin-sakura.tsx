@@ -1,6 +1,7 @@
 import * as React from 'react'
+import Table, { Column } from '../../lib/table'
 import './admin-sakura.css'
-import { Column, Table } from '../../lib'
+
 import { Manager, Model } from '../../utils/manager'
 import produce from 'immer'
 
