@@ -1,5 +1,5 @@
 import * as React from 'react'
-import './AdminSakura.css'
+import './admin-sakura.css'
 import { Column, Table } from '../../lib'
 import { Manager, Model } from '../../utils/manager'
 import produce from 'immer'

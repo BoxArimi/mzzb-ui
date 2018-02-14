@@ -1,5 +1,5 @@
 import * as React from 'react'
-import './Table.css'
+import './table.css'
 import { Model } from '../../utils/manager'
 
 export interface Column<T> {

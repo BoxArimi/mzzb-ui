@@ -1,1 +1,1 @@
-export { AdminSakura } from './AdminSakura/AdminSakura'
+export { AdminSakura } from './admin-sakura/admin-sakura'

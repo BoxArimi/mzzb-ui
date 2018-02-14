@@ -1,2 +1,2 @@
-export { Table, Column } from './Table/Table'
-export { Icon } from './Icon/Icon'
+export { Table, Column } from './table/table'
+export { Icon } from './icon/icon'
