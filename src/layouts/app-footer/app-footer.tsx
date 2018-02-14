@@ -1,12 +1,12 @@
 import * as React from 'react'
-import { Input, Modal } from 'antd'
+import { Input, Layout, Modal } from 'antd'
 import Icon from '../../lib/icon'
 
 import { AppContext, AppState, Session } from '../../App'
 import { loginManager, Result } from '../../utils/manager'
 import produce from 'immer'
 
-export class LoginModal extends React.Component<AppContext, {}> {
+export class AppFooter extends React.Component<AppContext, {}> {
 
   submitLogin = async () => {
     const username = (document.querySelector('#login-username') as HTMLInputElement).value
@@ -42,29 +42,33 @@ export class LoginModal extends React.Component<AppContext, {}> {
 
   render() {
     return (
-      <Modal
-        title="用户登入"
-        okText="登入"
-        cancelText="取消"
-        visible={this.props.state.viewModal}
-        confirmLoading={this.props.state.submiting}
-        onOk={this.submitLogin}
-        onCancel={this.hideLogin}
-      >
-        <Input
-          id="login-username"
-          prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-          placeholder="请输入用户名"
-          onPressEnter={() => (document.querySelector('#login-password') as HTMLInputElement).focus()}
-        />
-        <Input
-          id="login-password"
-          type="password"
-          prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
-          placeholder="请输入密码"
-          onPressEnter={this.submitLogin}
-        />
-      </Modal>
+      <Layout.Footer className="app-footer">
+        {this.props.state.viewModal && (
+          <Modal
+            title="用户登入"
+            okText="登入"
+            cancelText="取消"
+            visible={this.props.state.viewModal}
+            confirmLoading={this.props.state.submiting}
+            onOk={this.submitLogin}
+            onCancel={this.hideLogin}
+          >
+            <Input
+              id="login-username"
+              prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+              placeholder="请输入用户名"
+              onPressEnter={() => (document.querySelector('#login-password') as HTMLInputElement).focus()}
+            />
+            <Input
+              id="login-password"
+              type="password"
+              prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+              placeholder="请输入密码"
+              onPressEnter={this.submitLogin}
+            />
+          </Modal>
+        )}
+      </Layout.Footer>
     )
   }
 }

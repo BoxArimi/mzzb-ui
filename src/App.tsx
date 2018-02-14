@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { Layout, Modal } from 'antd'
-import Icon from './lib/icon'
 import './App.css'
 
 import { CollapseType } from 'antd/lib/layout/Sider'
@@ -26,10 +25,10 @@ export interface AppContext {
   update: (reducer: (state: AppState) => AppState) => void
 }
 
-const AsyncLoginModal = Loadable.Map({
+const AsyncAppHeader = Loadable.Map({
   loading: () => null,
   loader: {
-    Component: () => import('./layouts/login-modal'),
+    Component: () => import('./layouts/app-header'),
   },
   render(loaded: any, props: AppContext) {
     const Component = loaded.Component.default
@@ -37,10 +36,10 @@ const AsyncLoginModal = Loadable.Map({
   }
 })
 
-const AsyncConfirmLogout = Loadable.Map({
+const AsyncAppFooter = Loadable.Map({
   loading: () => null,
   loader: {
-    Component: () => import('./layouts/confirm-logout'),
+    Component: () => import('./layouts/app-footer'),
   },
   render(loaded: any, props: AppContext) {
     const Component = loaded.Component.default
@@ -65,18 +64,16 @@ class App extends React.Component<{}, AppState> {
     }
   }
 
+  update = (reducer: (state: AppState) => AppState) => {
+    this.setState(reducer(this.state))
+  }
+
   onCollapse = (viewSider: boolean, type: CollapseType) => {
     if (type === 'responsive') {
       this.setState(produce(this.state, (draft: AppState) => {
         draft.viewSider = viewSider
       }))
     }
-  }
-
-  showLogin = () => {
-    this.setState(produce(this.state, (draft: AppState) => {
-      draft.viewModal = true
-    }))
   }
 
   async componentDidMount() {
@@ -88,9 +85,6 @@ class App extends React.Component<{}, AppState> {
     } else {
       Modal.error({title: '获取当前登入状态异常', content: result.message})
     }
-
-    AsyncLoginModal.preload()
-    AsyncConfirmLogout.preload()
   }
 
   render() {
@@ -108,48 +102,16 @@ class App extends React.Component<{}, AppState> {
             sider
           </Layout.Sider>
           <Layout>
-            <Layout.Header
-              className="app-header"
-            >
-              <Icon
-                className="header-icon"
-                onClick={() => this.setState({...this.state, viewSider: !this.state.viewSider})}
-                type={this.state.viewSider ? 'menu-unfold' : 'menu-fold'}
-              />
-              {this.state.session.isLogged ? (
-                <AsyncConfirmLogout
-                  state={this.state}
-                  update={(reducer) => this.setState(reducer(this.state))}
-                />
-              ) : (
-                <Icon
-                  className="header-icon float-right"
-                  type="icon-login"
-                  onClick={this.showLogin}
-                />
-              )}
-            </Layout.Header>
-            <Layout.Content
-              className="app-content"
-            >
+            <AsyncAppHeader state={this.state} update={this.update}/>
+            <Layout.Content className="app-content">
               {this.props.children}
             </Layout.Content>
-            <Layout.Footer
-              className="app-footer"
-            >
-              {this.state.viewModal && (
-                <AsyncLoginModal
-                  state={this.state}
-                  update={(reducer) => this.setState(reducer(this.state))}
-                />
-              )}
-            </Layout.Footer>
+            <AsyncAppFooter state={this.state} update={this.update}/>
           </Layout>
         </Layout>
       </div>
     )
   }
-
 }
 
 export default App
