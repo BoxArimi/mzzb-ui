@@ -28,6 +28,9 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
 
   onClickItem = ({key}: ClickParam) => {
     if (key.charAt(0) === '/') {
+      this.context.update((draft: AppState) => {
+        draft.reload = undefined
+      })
       this.props.history.push(key)
     } else {
       window.open(key)
