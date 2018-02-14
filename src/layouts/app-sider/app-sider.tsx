@@ -13,18 +13,6 @@ const renderTitle = (route: RouteInfo) => {
   )
 }
 
-const renderMenu = (route: RouteInfo, key: number): React.ReactNode => {
-  return route.hasRoutes ? (
-    <Menu.SubMenu key={key} title={renderTitle(route)}>
-      {route.routes.map(renderMenu)}
-    </Menu.SubMenu>
-  ) : (
-    <Menu.Item key={key}>
-      {renderTitle(route)}
-    </Menu.Item>
-  )
-}
-
 export class AppSider extends React.Component<AppContext, {}> {
 
   onCollapse = (viewSider: boolean, type: CollapseType) => {
@@ -36,6 +24,23 @@ export class AppSider extends React.Component<AppContext, {}> {
   }
 
   render() {
+    const isAdmin = this.props.state.session.userRoles.indexOf('ROLE_ADMIN') > -1
+
+    const renderMenu = (route: RouteInfo, key: number): React.ReactNode => {
+      if (route.isAdmin && !isAdmin) {
+        return null
+      }
+      return route.hasRoutes ? (
+        <Menu.SubMenu key={key} title={renderTitle(route)}>
+          {route.routes.map(renderMenu)}
+        </Menu.SubMenu>
+      ) : (
+        <Menu.Item key={key}>
+          {renderTitle(route)}
+        </Menu.Item>
+      )
+    }
+
     return (
       <Layout.Sider
         className="app-sider"

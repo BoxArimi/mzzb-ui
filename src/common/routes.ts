@@ -19,13 +19,21 @@ interface NotRoutes extends RouteCommon {
 
 const routes: RouteInfo[] = [
   {
-    icon: 'icon-yinghua',
-    title: 'Sakura管理',
+    icon: 'profile',
+    title: '后台管理',
     isAdmin: true,
-    hasRoutes: false,
-    matchPath: '/admin/sakura',
-    component: () => import('../components/admin-sakura')
-  },
+    hasRoutes: true,
+    routes: [
+      {
+        icon: 'icon-yinghua',
+        title: 'Sakura管理',
+        isAdmin: true,
+        hasRoutes: false,
+        matchPath: '/admin/sakura',
+        component: () => import('../components/admin-sakura')
+      },
+    ]
+  }
 ]
 
 export default routes
