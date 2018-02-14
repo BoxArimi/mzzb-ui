@@ -2,24 +2,41 @@ import * as React from 'react'
 import produce from 'immer'
 import './App.css'
 
-import { Input, Layout, Modal, Popconfirm } from 'antd'
+import { Layout, Modal, Popconfirm } from 'antd'
 import { Icon } from './lib'
 
 import { CollapseType } from 'antd/lib/layout/Sider'
 import { loginManager, Result } from './utils/manager'
+import * as Loadable from 'react-loadable'
 
-interface Session {
+export interface Session {
   userName: string
   isLogged: boolean
   userRoles: string[]
 }
 
-interface AppState {
+export interface AppState {
   viewSider: boolean
-  viewModel: boolean
+  viewModal: boolean
   submiting: boolean
   session: Session
 }
+
+export interface AppContext {
+  state: AppState
+  update: (reducer: (state: AppState) => AppState) => void
+}
+
+const AsyncLoginModal = Loadable.Map({
+  loading: () => null,
+  loader: {
+    Component: () => import('./components/login-modal'),
+  },
+  render(loaded: any, props: AppContext) {
+    const Component = loaded.Component.default
+    return <Component {...props} />
+  }
+})
 
 class App extends React.Component<{}, AppState> {
 
@@ -28,7 +45,7 @@ class App extends React.Component<{}, AppState> {
 
     this.state = {
       viewSider: false,
-      viewModel: false,
+      viewModal: false,
       submiting: false,
       session: {
         isLogged: false,
@@ -59,39 +76,7 @@ class App extends React.Component<{}, AppState> {
 
   showLogin = () => {
     this.setState(produce(this.state, (draft: AppState) => {
-      draft.viewModel = true
-    }))
-  }
-
-  submitLogin = async () => {
-    const username = (document.querySelector('#login-username') as HTMLInputElement).value
-    const password = (document.querySelector('#login-password') as HTMLInputElement).value
-
-    if (!username || !password) {
-      Modal.warning({title: '请检查输入项', content: '你必须输入用户名和密码'})
-      return
-    }
-
-    this.setState(produce(this.state, (draft: AppState) => {
-      draft.submiting = true
-    }))
-
-    const result: Result<Session> = await loginManager.login(username, password)
-    this.setState(produce(this.state, (draft: AppState) => {
-      if (result.success) {
-        draft.session = result.data
-        draft.submiting = false
-        draft.viewModel = false
-      } else {
-        draft.submiting = false
-        Modal.error({title: '登入异常', content: result.message})
-      }
-    }))
-  }
-
-  hideLogin = () => {
-    this.setState(produce(this.state, (draft: AppState) => {
-      draft.viewModel = false
+      draft.viewModal = true
     }))
   }
 
@@ -104,6 +89,8 @@ class App extends React.Component<{}, AppState> {
     } else {
       Modal.error({title: '获取当前登入状态异常', content: result.message})
     }
+
+    AsyncLoginModal.preload()
   }
 
   render() {
@@ -158,29 +145,12 @@ class App extends React.Component<{}, AppState> {
             <Layout.Footer
               className="app-footer"
             >
-              <Modal
-                title="用户登入"
-                okText="登入"
-                cancelText="取消"
-                visible={this.state.viewModel}
-                confirmLoading={this.state.submiting}
-                onOk={this.submitLogin}
-                onCancel={this.hideLogin}
-              >
-                <Input
-                  id="login-username"
-                  prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                  placeholder="请输入用户名"
-                  onPressEnter={() => (document.querySelector('#login-password') as HTMLInputElement).focus()}
+              {this.state.viewModal && (
+                <AsyncLoginModal
+                  state={this.state}
+                  update={(reducer) => this.setState(reducer(this.state))}
                 />
-                <Input
-                  id="login-password"
-                  type="password"
-                  prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                  placeholder="请输入密码"
-                  onPressEnter={this.submitLogin}
-                />
-              </Modal>
+              )}
             </Layout.Footer>
           </Layout>
         </Layout>
