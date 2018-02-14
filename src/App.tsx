@@ -28,7 +28,7 @@ export interface AppState {
 
 export interface AppContext {
   state: AppState
-  update: (reducer: (state: AppState) => AppState) => void
+  update: (reducer: (draft: AppState) => void) => void
 }
 
 const async = (loader: () => any) => {
@@ -71,8 +71,8 @@ class App extends React.Component<{}, AppState> {
     }
   }
 
-  update = (reducer: (state: AppState) => AppState) => {
-    this.setState(reducer(this.state))
+  update = (reducer: (draft: AppState) => void) => {
+    this.setState(produce(this.state, reducer))
   }
 
   getChildContext() {

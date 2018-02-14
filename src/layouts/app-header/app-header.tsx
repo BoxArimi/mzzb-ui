@@ -4,28 +4,27 @@ import Icon from '../../lib/icon'
 
 import { AppContext, AppState, Session } from '../../App'
 import { loginManager, Result } from '../../utils/manager'
-import produce from 'immer'
 
 export class AppHeader extends React.Component<AppContext, {}> {
 
   toggleSider = () => {
-    this.props.update(state => produce(state, (draft: AppState) => {
-      draft.viewSider = !state.viewSider
-    }))
+    this.props.update((draft: AppState) => {
+      draft.viewSider = !draft.viewSider
+    })
   }
 
   showLogin = () => {
-    this.props.update(state => produce(state, (draft: AppState) => {
+    this.props.update((draft: AppState) => {
       draft.viewModal = true
-    }))
+    })
   }
 
   submitLogout = async () => {
     const result: Result<Session> = await loginManager.logout()
     if (result.success) {
-      this.props.update(state => produce(state, (draft: AppState) => {
+      this.props.update((draft: AppState) => {
         draft.session = result.data
-      }))
+      })
     } else {
       Modal.error({title: '登出异常', content: result.message})
     }

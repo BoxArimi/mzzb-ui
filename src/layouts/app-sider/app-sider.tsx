@@ -5,7 +5,6 @@ import Icon from '../../lib/icon'
 import { AppContext, AppState } from '../../App'
 import { CollapseType } from 'antd/lib/layout/Sider'
 import { default as routes, RouteInfo } from '../../common/routes'
-import produce from 'immer'
 
 const renderTitle = (route: RouteInfo) => {
   return (
@@ -17,9 +16,9 @@ export class AppSider extends React.Component<AppContext, {}> {
 
   onCollapse = (viewSider: boolean, type: CollapseType) => {
     if (type === 'responsive') {
-      this.props.update(state => produce(state, (draft: AppState) => {
+      this.props.update((draft: AppState) => {
         draft.viewSider = viewSider
-      }))
+      })
     }
   }
 

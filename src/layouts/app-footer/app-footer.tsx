@@ -4,7 +4,6 @@ import Icon from '../../lib/icon'
 
 import { AppContext, AppState, Session } from '../../App'
 import { loginManager, Result } from '../../utils/manager'
-import produce from 'immer'
 
 export class AppFooter extends React.Component<AppContext, {}> {
 
@@ -17,12 +16,12 @@ export class AppFooter extends React.Component<AppContext, {}> {
       return
     }
 
-    this.props.update(state => produce(state, (draft: AppState) => {
+    this.props.update((draft: AppState) => {
       draft.submiting = true
-    }))
+    })
 
     const result: Result<Session> = await loginManager.login(username, password)
-    this.props.update(state => produce(state, (draft: AppState) => {
+    this.props.update((draft: AppState) => {
       if (result.success) {
         draft.session = result.data
         draft.submiting = false
@@ -31,13 +30,13 @@ export class AppFooter extends React.Component<AppContext, {}> {
         draft.submiting = false
         Modal.error({title: '登入异常', content: result.message})
       }
-    }))
+    })
   }
 
   hideLogin = () => {
-    this.props.update(state => produce(state, (draft: AppState) => {
+    this.props.update((draft: AppState) => {
       draft.viewModal = false
-    }))
+    })
   }
 
   render() {
