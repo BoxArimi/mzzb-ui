@@ -7,6 +7,7 @@ import App from './App'
 import Loading from './lib/loading'
 import NotFound from './components/not-found'
 import * as Loadable from 'react-loadable'
+import routes, { RouteInfo } from './common/routes'
 import registerServiceWorker from './registerServiceWorker'
 
 export const async = (loader: () => any) => {
@@ -18,14 +19,22 @@ export const async = (loader: () => any) => {
   })
 }
 
-const AsyncAdminSakura = async(() => import('./components/admin-sakura'))
+const renderRoute = (route: RouteInfo, key: number): React.ReactNode => {
+  if (route.hasRoutes) {
+    return route.routes.map(renderRoute)
+  } else {
+    return (
+      <Route key={key} path={route.matchPath} component={async(route.component)}/>
+    )
+  }
+}
 
 ReactDOM.render(
   <BrowserRouter>
     <App>
       <Switch>
         <Redirect exact={true} path="/" to="/admin/sakura"/>
-        <Route path="/admin/sakura" component={AsyncAdminSakura}/>
+        {routes.map(renderRoute)}
         <Route path="/not-found" component={NotFound}/>
         <Redirect exact={true} path="*" to="/not-found"/>
       </Switch>
