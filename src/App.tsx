@@ -1,11 +1,12 @@
 import * as React from 'react'
-import './App.css'
-import { AdminSakura } from './components'
-import { Input, Layout, Modal, Popconfirm } from 'antd'
-import { CollapseType } from 'antd/lib/layout/Sider'
-import { Icon } from './lib'
-import { loginManager, Result } from './utils/manager'
 import produce from 'immer'
+import './App.css'
+
+import { Input, Layout, Modal, Popconfirm } from 'antd'
+import { Icon } from './lib'
+
+import { CollapseType } from 'antd/lib/layout/Sider'
+import { loginManager, Result } from './utils/manager'
 
 interface Session {
   userName: string
@@ -152,7 +153,7 @@ class App extends React.Component<{}, AppState> {
             <Layout.Content
               className="app-content"
             >
-              <AdminSakura/>
+              {this.props.children}
             </Layout.Content>
             <Layout.Footer
               className="app-footer"
