@@ -25,6 +25,14 @@ const routes: RouteInfo[] = [
     hasRoutes: true,
     routes: [
       {
+        icon: 'icon-user',
+        title: '用户管理',
+        role: 'ROLE_BASIC',
+        hasRoutes: false,
+        matchPath: '/admin/user',
+        component: () => import('../components/admin-user')
+      },
+      {
         icon: 'icon-yinghua',
         title: 'Sakura管理',
         role: 'ROLE_BASIC',
