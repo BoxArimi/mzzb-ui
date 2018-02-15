@@ -54,8 +54,8 @@ class App extends React.Component<{}, AppState> {
       viewModal: false,
       submiting: false,
       session: {
-        isLogged: false,
         userName: 'Guest',
+        isLogged: false,
         userRoles: [],
       },
     }
