@@ -65,14 +65,14 @@ export const loginManager = {
   },
   login(username: string, password: string) {
     password = md5Password(username, password)
-    return request('/api/session', {
+    return request('/api/session/login', {
       method: 'post',
       body: JSON.stringify({username, password}),
     })
   },
   logout() {
-    return request('/api/session', {
-      method: 'delete',
+    return request('/api/session/logout', {
+      method: 'post',
     })
   },
 }
