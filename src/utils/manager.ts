@@ -60,7 +60,7 @@ export const md5Password = (username: string, password: string) => {
 }
 
 export const loginManager = {
-  check() {
+  current() {
     return request('/api/session')
   },
   login(username: string, password: string) {

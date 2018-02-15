@@ -73,7 +73,7 @@ class App extends React.Component<{}, AppState> {
   }
 
   async componentDidMount() {
-    const result: Result<Session> = await loginManager.check()
+    const result: Result<Session> = await loginManager.current()
     this.update(draft => {
       if (result.success) {
         draft.session = result.data
