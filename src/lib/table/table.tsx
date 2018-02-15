@@ -9,7 +9,7 @@ export interface Column<T> {
 }
 
 interface TableProps<T> {
-  title: string
+  title?: string
   rows: T[]
   columns: Column<T>[]
 }
@@ -19,9 +19,11 @@ export class Table<T extends Model> extends React.Component<TableProps<T>, {}> {
   render() {
     return (
       <div className="table-root">
-        <div className="table-title">
-          {this.props.title}
-        </div>
+        {this.props.title && (
+          <div className="table-title">
+            {this.props.title}
+          </div>
+        )}
         <table className="table table-striped table-bordered table-hover">
           <thead>
           <tr>

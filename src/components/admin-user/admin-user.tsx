@@ -102,7 +102,7 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
               <Alert message={this.state.message} type="error"/>
             )}
             {this.state.users && (
-              <Table title="用户列表" rows={this.state.users} columns={columns}/>
+              <Table rows={this.state.users} columns={columns}/>
             )}
           </Tabs.TabPane>
           <Tabs.TabPane tab="添加用户" key="2">
