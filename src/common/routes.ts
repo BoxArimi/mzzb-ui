@@ -3,7 +3,7 @@ export type RouteInfo = HasRoutes | NotRoutes
 interface RouteCommon {
   icon: string
   title: string
-  isAdmin: boolean
+  role: 'ROLE_ADMIN' | 'ROLE_BASIC' | undefined
 }
 
 interface HasRoutes extends RouteCommon {
@@ -21,13 +21,13 @@ const routes: RouteInfo[] = [
   {
     icon: 'profile',
     title: '后台管理',
-    isAdmin: true,
+    role: 'ROLE_BASIC',
     hasRoutes: true,
     routes: [
       {
         icon: 'icon-yinghua',
         title: 'Sakura管理',
-        isAdmin: true,
+        role: 'ROLE_BASIC',
         hasRoutes: false,
         matchPath: '/admin/sakura',
         component: () => import('../components/admin-sakura')

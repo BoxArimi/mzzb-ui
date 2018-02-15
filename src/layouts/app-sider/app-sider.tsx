@@ -40,10 +40,10 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
   }
 
   render() {
-    const isAdmin = this.context.state.session.userRoles.indexOf('ROLE_ADMIN') > -1
+    const userRoles: string[] = this.context.state.session.userRoles
 
     const renderMenu = (route: RouteInfo, key: number): React.ReactNode => {
-      if (route.isAdmin && !isAdmin) {
+      if (route.role && !userRoles.some(role => role === route.role)) {
         return null
       }
       return route.hasRoutes ? (
