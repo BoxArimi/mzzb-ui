@@ -51,7 +51,7 @@ export class BasicSakura extends React.Component<{}, BasicSakuraState> {
     this.setState((prevState => produce(prevState, reducer)))
   }
 
-  listAdminSakuras = async (): Promise<void> => {
+  listSakura = async (): Promise<void> => {
     this.context.update((draft: AppState) => {
       draft.reload!.pending = true
     })
@@ -74,10 +74,10 @@ export class BasicSakura extends React.Component<{}, BasicSakuraState> {
 
   async componentDidMount() {
     this.context.update((draft: AppState) => {
-      draft.reload = {pending: true, handle: this.listAdminSakuras}
+      draft.reload = {pending: true, handle: this.listSakura}
     })
 
-    await this.listAdminSakuras()
+    await this.listSakura()
   }
 
   render() {
