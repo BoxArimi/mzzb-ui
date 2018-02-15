@@ -1,9 +1,10 @@
 import * as React from 'react'
-import { Alert } from 'antd'
+import { Alert, Button, Input, Modal, Tabs } from 'antd'
 import Table, { Column } from '../../lib/table'
+import Icon from '../../lib/icon'
 import './admin-user.css'
 
-import { Manager, Model, Result } from '../../utils/manager'
+import { Manager, md5Password, Model, Result } from '../../utils/manager'
 import { AppState, default as App } from '../../App'
 import produce from 'immer'
 
@@ -43,7 +44,7 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
     this.setState((prevState => produce(prevState, reducer)))
   }
 
-  listAdminUsers = async (): Promise<void> => {
+  listAdminUsers = async () => {
     this.context.update((draft: AppState) => {
       draft.reload!.pending = true
     })
@@ -64,6 +65,26 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
     })
   }
 
+  addAdminUser = async () => {
+    const username = (document.querySelector('#add-username') as HTMLInputElement).value
+    const password = (document.querySelector('#add-password') as HTMLInputElement).value
+
+    if (!username || !password) {
+      Modal.warning({title: '请检查输入项', content: '你必须输入用户名和密码'})
+    } else {
+      const encode = md5Password(username, password)
+      const result = await this.manager.addOne({username, password: encode})
+
+      if (result.success) {
+        this.update(draft => {
+          draft.users && draft.users.push(result.data)
+        })
+      } else {
+        Modal.error({title: '添加用户错误', content: result.message})
+      }
+    }
+  }
+
   async componentDidMount() {
     this.context.update((draft: AppState) => {
       draft.reload = {pending: true, handle: this.listAdminUsers}
@@ -75,12 +96,36 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
   render() {
     return (
       <div className="admin-users">
-        {this.state.message && (
-          <Alert message={this.state.message} type="error"/>
-        )}
-        {this.state.users && (
-          <Table title="用户列表" rows={this.state.users} columns={columns}/>
-        )}
+        <Tabs>
+          <Tabs.TabPane tab="用户列表" key="1">
+            {this.state.message && (
+              <Alert message={this.state.message} type="error"/>
+            )}
+            {this.state.users && (
+              <Table title="用户列表" rows={this.state.users} columns={columns}/>
+            )}
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="添加用户" key="2">
+            <div style={{padding: 10}}>
+              <Input
+                id="add-username"
+                prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                placeholder="请输入用户名"
+              />
+            </div>
+            <div style={{padding: 10}}>
+              <Input
+                id="add-password"
+                type="password"
+                prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                placeholder="请输入密码"
+              />
+            </div>
+            <div style={{padding: '5px 10px'}}>
+              <Button type="primary" onClick={this.addAdminUser}>添加用户</Button>
+            </div>
+          </Tabs.TabPane>
+        </Tabs>
       </div>
     )
   }

@@ -41,7 +41,7 @@ export class Manager<T extends Model> {
     return this.request(`${this.path}/${id}`)
   }
 
-  addOne(t: T): Promise<Result<T>> {
+  addOne(t: any): Promise<Result<T>> {
     return this.request(this.path, {method: 'post', body: JSON.stringify(t)})
   }
 
@@ -55,12 +55,16 @@ export class Manager<T extends Model> {
 
 }
 
+export const md5Password = (username: string, password: string) => {
+  return md5(username + md5(password))
+}
+
 export const loginManager = {
   check() {
     return request('/api/session')
   },
   login(username: string, password: string) {
-    password = md5(username + md5(password))
+    password = md5Password(username, password)
     return request('/api/session', {
       method: 'post',
       body: JSON.stringify({username, password}),
