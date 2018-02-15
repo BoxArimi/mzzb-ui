@@ -27,7 +27,7 @@ const routes: RouteInfo[] = [
       {
         icon: 'icon-user',
         title: '用户管理',
-        role: 'ROLE_BASIC',
+        role: 'ROLE_ADMIN',
         hasRoutes: false,
         matchPath: '/admin/user',
         component: () => import('../components/admin-user')
@@ -37,8 +37,8 @@ const routes: RouteInfo[] = [
         title: 'Sakura管理',
         role: 'ROLE_BASIC',
         hasRoutes: false,
-        matchPath: '/admin/sakura',
-        component: () => import('../components/admin-sakura')
+        matchPath: '/basic/sakura',
+        component: () => import('../components/basic-sakura')
       },
     ]
   }

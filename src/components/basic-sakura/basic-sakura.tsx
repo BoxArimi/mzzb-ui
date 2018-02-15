@@ -1,21 +1,21 @@
 import * as React from 'react'
 import { Alert } from 'antd'
 import Table, { Column } from '../../lib/table'
-import './admin-sakura.css'
+import './basic-sakura.css'
 
 import { Manager, Model, Result } from '../../utils/manager'
 import { AppState, default as App } from '../../App'
 import produce from 'immer'
 
-interface AdminSakuraModel extends Model {
+interface BasicSakuraModel extends Model {
   key: string
   title: string
   enabled: boolean
   sakuraUpdateDate: number
 }
 
-interface AdminSakuraState {
-  sakuras?: AdminSakuraModel[]
+interface BasicSakuraState {
+  sakuras?: BasicSakuraModel[]
   message?: string
 }
 
@@ -27,7 +27,7 @@ const formatTime = (sakuraUpdateDate: number) => {
   return `${hour}时${minute}分前`
 }
 
-const columns: Column<AdminSakuraModel>[] = [
+const columns: Column<BasicSakuraModel>[] = [
   {key: 'id', title: '#', format: (t) => t.id},
   {key: 'key', title: 'Key', format: (t) => t.key},
   {key: 'title', title: '标题', format: (t) => t.title},
@@ -35,11 +35,11 @@ const columns: Column<AdminSakuraModel>[] = [
   {key: 'sakuraUpdateDate', title: '上次更新', format: (t) => formatTime(t.sakuraUpdateDate)},
 ]
 
-export class AdminSakura extends React.Component<{}, AdminSakuraState> {
+export class BasicSakura extends React.Component<{}, BasicSakuraState> {
 
   static contextTypes = App.childContextTypes
 
-  manager: Manager<AdminSakuraModel> = new Manager('/api/admin/sakuras')
+  manager: Manager<BasicSakuraModel> = new Manager('/api/basic/sakuras')
 
   constructor(props: {}) {
     super(props)
@@ -47,7 +47,7 @@ export class AdminSakura extends React.Component<{}, AdminSakuraState> {
     this.state = {}
   }
 
-  update = (reducer: (draft: AdminSakuraState) => void) => {
+  update = (reducer: (draft: BasicSakuraState) => void) => {
     this.setState((prevState => produce(prevState, reducer)))
   }
 
@@ -56,7 +56,7 @@ export class AdminSakura extends React.Component<{}, AdminSakuraState> {
       draft.reload!.pending = true
     })
 
-    const result: Result<AdminSakuraModel[]> = await this.manager.findAll()
+    const result: Result<BasicSakuraModel[]> = await this.manager.findAll()
 
     this.update(draft => {
       if (result.success) {
@@ -82,12 +82,12 @@ export class AdminSakura extends React.Component<{}, AdminSakuraState> {
 
   render() {
     return (
-      <div className="admin-sakura">
+      <div className="basic-sakura">
         {this.state.message && (
           <Alert message={this.state.message} type="error"/>
         )}
         {this.state.sakuras && (
-          <Table title="sakura list" rows={this.state.sakuras} columns={columns}/>
+          <Table title="sakura列表" rows={this.state.sakuras} columns={columns}/>
         )}
       </div>
     )
