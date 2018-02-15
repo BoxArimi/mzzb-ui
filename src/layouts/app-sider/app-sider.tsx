@@ -42,12 +42,14 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
   render() {
     const userRoles: string[] = this.context.state.session.userRoles
 
-    const renderMenu = (route: RouteInfo, key: number): React.ReactNode => {
+    let subMenuIndex = 0
+
+    const renderMenu = (route: RouteInfo): React.ReactNode => {
       if (route.role && !userRoles.some(role => role === route.role)) {
         return null
       }
       return route.hasRoutes ? (
-        <Menu.SubMenu key={key} title={renderTitle(route)}>
+        <Menu.SubMenu key={`sub${++subMenuIndex}`} title={renderTitle(route)}>
           {route.routes.map(renderMenu)}
         </Menu.SubMenu>
       ) : (
@@ -72,6 +74,7 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
         <Menu
           mode="inline"
           selectedKeys={[this.props.location.pathname]}
+          defaultOpenKeys={['sub1']}
           style={{height: '100%'}}
           onClick={this.onClickItem}
         >
