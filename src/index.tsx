@@ -33,7 +33,7 @@ ReactDOM.render(
   <BrowserRouter>
     <App>
       <Switch>
-        <Redirect exact={true} path="/" to="/admin/sakura"/>
+        <Redirect exact={true} path="/" to="/basic/sakura"/>
         {routes.map(renderRoute)}
         <Route path="/not-found" component={NotFound}/>
         <Redirect exact={true} path="*" to="/not-found"/>
