@@ -1,7 +1,8 @@
 import * as React from 'react'
-import { Alert, Button, Input, Modal, Tabs } from 'antd'
+import { Alert, Button, Checkbox, Input, Modal, Tabs } from 'antd'
 import Table, { Column } from '../../lib/table'
 import Icon from '../../lib/icon'
+import Link from '../../lib/link'
 import './admin-user.css'
 
 import { Manager, md5Password, Model, Result } from '../../utils/manager'
@@ -44,7 +45,7 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
     this.setState((prevState => produce(prevState, reducer)))
   }
 
-  listAdminUsers = async () => {
+  listUser = async () => {
     this.context.update((draft: AppState) => {
       draft.reload!.pending = true
     })
@@ -65,9 +66,9 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
     })
   }
 
-  addAdminUser = async () => {
-    const username = (document.querySelector('#add-username') as HTMLInputElement).value
-    const password = (document.querySelector('#add-password') as HTMLInputElement).value
+  saveUser = async () => {
+    const username = (document.querySelector('#save-username') as HTMLInputElement).value
+    const password = (document.querySelector('#save-password') as HTMLInputElement).value
 
     if (!username || !password) {
       Modal.warning({title: '请检查输入项', content: '你必须输入用户名和密码'})
@@ -77,7 +78,7 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
 
       if (result.success) {
         this.update(draft => {
-          draft.users && draft.users.push(result.data)
+          draft.users!.push(result.data)
         })
       } else {
         Modal.error({title: '添加用户错误', content: result.message})
@@ -85,15 +86,76 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
     }
   }
 
+  editUser = async (id: number) => {
+    const username = (document.querySelector('#edit-username') as HTMLInputElement).value
+    const password = (document.querySelector('#edit-password') as HTMLInputElement).value
+    const enabled = (document.querySelector('#edit-enabled input') as HTMLInputElement).checked
+
+    if (!username) {
+      Modal.warning({title: '请检查输入项', content: '你必须输入用户名'})
+    } else {
+      const encode = password ? md5Password(username, password) : ''
+      const result = await this.manager.update({
+        id, username, password: encode, enabled
+      })
+
+      if (result.success) {
+        this.update(draft => {
+          draft.users = draft.users!.map(u => u.id === result.data.id ? result.data : u)
+        })
+      } else {
+        Modal.error({title: '编辑用户错误', content: result.message})
+      }
+    }
+  }
+
   async componentDidMount() {
     this.context.update((draft: AppState) => {
-      draft.reload = {pending: true, handle: this.listAdminUsers}
+      draft.reload = {pending: true, handle: this.listUser}
     })
 
-    await this.listAdminUsers()
+    await this.listUser()
+  }
+
+  showEditConfirm(user: AdminUserModel) {
+    Modal.confirm({
+      title: '编辑用户',
+      okText: '保存',
+      okType: 'primary',
+      onOk: () => this.editUser(user.id),
+      cancelText: '取消',
+      content: (
+        <div>
+          <div style={{padding: 10}}>
+            <Input
+              id="edit-username"
+              defaultValue={user.username}
+              prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+              placeholder="请输入用户名"
+            />
+          </div>
+          <div style={{padding: 10}}>
+            <Input
+              id="edit-password"
+              type="password"
+              prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+              placeholder="如不需修改密码可留空"
+            />
+          </div>
+          <div id="edit-enabled" style={{padding: 10}}>
+            <Checkbox defaultChecked={user.enabled}>启用</Checkbox>
+          </div>
+        </div>
+      ),
+    })
   }
 
   render() {
+    const finalColumns: Column<AdminUserModel>[] = [...columns, {
+      key: 'control', title: '功能', format: (t) => (
+        <Link onClick={() => this.showEditConfirm(t)}>编辑</Link>
+      )
+    }]
     return (
       <div className="admin-users">
         <Tabs>
@@ -102,27 +164,27 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
               <Alert message={this.state.message} type="error"/>
             )}
             {this.state.users && (
-              <Table rows={this.state.users} columns={columns}/>
+              <Table rows={this.state.users} columns={finalColumns}/>
             )}
           </Tabs.TabPane>
           <Tabs.TabPane tab="添加用户" key="2">
             <div style={{padding: 10}}>
               <Input
-                id="add-username"
+                id="save-username"
                 prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
                 placeholder="请输入用户名"
               />
             </div>
             <div style={{padding: 10}}>
               <Input
-                id="add-password"
+                id="save-password"
                 type="password"
                 prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
                 placeholder="请输入密码"
               />
             </div>
             <div style={{padding: '5px 10px'}}>
-              <Button type="primary" onClick={this.addAdminUser}>添加用户</Button>
+              <Button type="primary" onClick={this.saveUser}>添加用户</Button>
             </div>
           </Tabs.TabPane>
         </Tabs>

@@ -49,7 +49,7 @@ export class Manager<T extends Model> {
     return this.request(`${this.path}/${id}`, {method: 'delete'})
   }
 
-  update(t: T): Promise<Result<T>> {
+  update(t: any): Promise<Result<T>> {
     return this.request(`${this.path}/${t.id}`, {method: 'post', body: JSON.stringify(t)})
   }
 
