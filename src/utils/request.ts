@@ -8,13 +8,16 @@ function prepareCookies({credentials, ...props}: RequestInit) {
   return {credentials, ...props}
 }
 
-function prepareCsrfToken({method = 'get', headers = {}, ...prors}: RequestInit) {
+function prepareHeaders({headers = {}, ...prors}: RequestInit) {
   const name = sessionStorage[header]
   const value = sessionStorage[token]
   if (name && value) {
     headers[name] = value
   }
-  return {method, headers, ...prors}
+  if (prors.body) {
+    headers['Content-Type'] = 'application/json;charset=UTF-8'
+  }
+  return {headers, ...prors}
 }
 
 function checkStatus(response: Response) {
@@ -41,7 +44,7 @@ function parseToJSON(response: Response) {
 
 export default function request(url: string, props: RequestInit = {}) {
   props = prepareCookies(props)
-  props = prepareCsrfToken(props)
+  props = prepareHeaders(props)
   return fetch(url, props)
     .then(checkStatus)
     .then(saveCsrfToken)
