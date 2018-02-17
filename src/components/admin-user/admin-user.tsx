@@ -9,6 +9,38 @@ import { Manager, md5Password, Model, Result } from '../../utils/manager'
 import { AppState, default as App } from '../../App'
 import produce from 'immer'
 
+const formatLong = (text: string, start: number, length: number, short: boolean) => {
+  return short ? text.substr(start, length) : text
+}
+
+const getColumns = (isMobile: boolean): Column<AdminUserModel>[] => [
+  {
+    key: 'id',
+    title: '#',
+    format: (t) => t.id
+  },
+  {
+    key: 'username',
+    title: '用户名',
+    format: (t) => t.username
+  },
+  {
+    key: 'enabled',
+    title: '启用',
+    format: (t) => t.enabled ? '是' : '否'
+  },
+  {
+    key: 'registerDate',
+    title: '注册时间',
+    format: (t) => formatLong(t.registerDate, 0, 10, isMobile)
+  },
+  {
+    key: 'lastLoggedIn',
+    title: '最后登入',
+    format: (t) => formatLong(t.lastLoggedIn, 5, 11, isMobile)
+  },
+]
+
 interface AdminUserModel extends Model {
   username: string
   enabled: boolean
@@ -20,14 +52,6 @@ interface AdminUserState {
   users?: AdminUserModel[]
   message?: string
 }
-
-const columns: Column<AdminUserModel>[] = [
-  {key: 'id', title: '#', format: (t) => t.id},
-  {key: 'username', title: '用户名', format: (t) => t.username},
-  {key: 'enabled', title: '启用', format: (t) => t.enabled ? '是' : '否'},
-  {key: 'registerDate', title: '注册时间', format: (t) => t.registerDate},
-  {key: 'lastLoggedIn', title: '最后登入', format: (t) => t.lastLoggedIn},
-]
 
 export class AdminUser extends React.Component<{}, AdminUserState> {
 
@@ -151,7 +175,7 @@ export class AdminUser extends React.Component<{}, AdminUserState> {
   }
 
   render() {
-    const finalColumns: Column<AdminUserModel>[] = [...columns, {
+    const finalColumns: Column<AdminUserModel>[] = [...getColumns(this.context.state.isMobile), {
       key: 'control', title: '功能', format: (t) => (
         <Link onClick={() => this.showEditConfirm(t)}>编辑</Link>
       )
