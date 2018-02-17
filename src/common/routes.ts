@@ -25,6 +25,13 @@ interface SiteLink extends RouteCommon {
 
 const routes: RouteInfo[] = [
   {
+    icon: 'home',
+    text: '首页',
+    type: 'Route',
+    matchPath: '/home',
+    component: () => import('../components/home')
+  },
+  {
     icon: 'profile',
     text: '后台管理',
     role: 'ROLE_BASIC',
