@@ -19,9 +19,10 @@ export interface Reload {
 }
 
 export interface AppState {
-  viewSider: boolean
+  hideSider: boolean
   viewModal: boolean
   submiting: boolean
+  isMobile: boolean
   session: Session
   reload?: Reload
 }
@@ -50,9 +51,10 @@ class App extends React.Component<{}, AppState> {
     super(props)
 
     this.state = {
-      viewSider: false,
+      hideSider: false,
       viewModal: false,
       submiting: false,
+      isMobile: window.innerWidth <= 768,
       session: {
         userName: 'Guest',
         isLogged: false,
@@ -72,6 +74,17 @@ class App extends React.Component<{}, AppState> {
     }
   }
 
+  throttle = (delay: number, action: (...props: any[]) => void) => {
+    let timestamp = 0
+    return (...props: any[]) => {
+      const current = new Date().getTime()
+      if (current - timestamp > delay) {
+        action.apply(this, props)
+        timestamp = current
+      }
+    }
+  }
+
   async componentDidMount() {
     const result: Result<Session> = await loginManager.current()
     this.update(draft => {
@@ -80,6 +93,12 @@ class App extends React.Component<{}, AppState> {
       } else {
         Modal.error({title: '获取当前登入状态异常', content: result.message})
       }
+    })
+
+    window.onresize = this.throttle(100, () => {
+      this.update(draft => {
+        draft.isMobile = window.innerWidth <= 768
+      })
     })
   }
 

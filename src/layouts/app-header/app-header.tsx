@@ -11,7 +11,7 @@ export class AppHeader extends React.Component<{}, {}> {
 
   toggleSider = () => {
     this.context.update((draft: AppState) => {
-      draft.viewSider = !draft.viewSider
+      draft.hideSider = !draft.hideSider
     })
   }
 
@@ -38,7 +38,7 @@ export class AppHeader extends React.Component<{}, {}> {
         <Icon
           className="header-icon"
           onClick={this.toggleSider}
-          type={this.context.state.viewSider ? 'menu-unfold' : 'menu-fold'}
+          type={this.context.state.hideSider ? 'menu-unfold' : 'menu-fold'}
         />
         {this.context.state.reload && (
           <Icon

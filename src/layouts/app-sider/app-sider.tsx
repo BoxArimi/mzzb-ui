@@ -18,10 +18,10 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
 
   static contextTypes = App.childContextTypes
 
-  onCollapse = (viewSider: boolean, type: CollapseType) => {
+  onCollapse = (hideSider: boolean, type: CollapseType) => {
     if (type === 'responsive') {
       this.context.update((draft: AppState) => {
-        draft.viewSider = viewSider
+        draft.hideSider = hideSider
       })
     }
   }
@@ -31,6 +31,7 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
       if (key !== location.pathname) {
         this.context.update((draft: AppState) => {
           draft.reload = undefined
+          draft.isMobile && (draft.hideSider = true)
         })
         this.props.history.push(key)
       }
@@ -73,7 +74,7 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
     return (
       <Layout.Sider
         className="app-sider"
-        collapsed={this.context.state.viewSider}
+        collapsed={this.context.state.hideSider}
         onCollapse={this.onCollapse}
         collapsedWidth={0}
         breakpoint="md"
