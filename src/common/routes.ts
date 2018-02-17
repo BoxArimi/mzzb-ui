@@ -32,6 +32,13 @@ const routes: RouteInfo[] = [
     component: () => import('../components/home')
   },
   {
+    icon: 'icon-yinghua',
+    text: 'Sakura',
+    type: 'Route',
+    matchPath: '/sakura',
+    component: () => import('../components/sakura')
+  },
+  {
     icon: 'profile',
     text: '后台管理',
     role: 'ROLE_BASIC',

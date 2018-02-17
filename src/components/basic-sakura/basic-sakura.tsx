@@ -8,7 +8,7 @@ import { Manager, Model, Result } from '../../utils/manager'
 import { AppState, default as App } from '../../App'
 import produce from 'immer'
 
-interface BasicSakuraModel extends Model {
+export interface BasicSakuraModel extends Model {
   key: string
   title: string
   enabled: boolean
