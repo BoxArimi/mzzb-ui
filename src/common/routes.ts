@@ -1,47 +1,70 @@
-export type RouteInfo = HasRoutes | NotRoutes
+export type RouteInfo = HasRoutes | NotRoutes | SiteLink
 
 interface RouteCommon {
   icon: string
-  title: string
-  role: 'ROLE_ADMIN' | 'ROLE_BASIC' | undefined
+  text: string
+  role?: 'ROLE_ADMIN' | 'ROLE_BASIC'
+  type: 'Routes' | 'Route' | 'Link'
 }
 
 interface HasRoutes extends RouteCommon {
-  hasRoutes: true
+  type: 'Routes'
   routes: RouteInfo[]
 }
 
 interface NotRoutes extends RouteCommon {
-  hasRoutes: false
+  type: 'Route'
   matchPath: string
   component: () => any
+}
+
+interface SiteLink extends RouteCommon {
+  type: 'Link'
+  matchPath: string
 }
 
 const routes: RouteInfo[] = [
   {
     icon: 'profile',
-    title: '后台管理',
+    text: '后台管理',
     role: 'ROLE_BASIC',
-    hasRoutes: true,
+    type: 'Routes',
     routes: [
       {
         icon: 'icon-user',
-        title: '用户管理',
+        text: '用户管理',
         role: 'ROLE_ADMIN',
-        hasRoutes: false,
+        type: 'Route',
         matchPath: '/admin/user',
         component: () => import('../components/admin-user')
       },
       {
         icon: 'icon-yinghua',
-        title: 'Sakura管理',
+        text: 'Sakura管理',
         role: 'ROLE_BASIC',
-        hasRoutes: false,
+        type: 'Route',
         matchPath: '/basic/sakura',
         component: () => import('../components/basic-sakura')
       },
     ]
-  }
+  },
+  {
+    icon: 'icon-social-tieba',
+    text: '名作之壁吧',
+    type: 'Link',
+    matchPath: 'https://tieba.baidu.com/f?kw=%E5%90%8D%E4%BD%9C%E4%B9%8B%E5%A3%81'
+  },
+  {
+    icon: 'github',
+    text: 'Github - UI',
+    type: 'Link',
+    matchPath: 'https://github.com/mingzuozhibi/mzzb-ui'
+  }, {
+    icon: 'github',
+    text: 'Github - Server',
+    type: 'Link',
+    matchPath: 'https://github.com/mingzuozhibi/mzzb-server'
+  },
 ]
 
 export default routes

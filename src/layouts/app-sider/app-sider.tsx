@@ -10,7 +10,7 @@ import { default as routes, RouteInfo } from '../../common/routes'
 
 const renderTitle = (route: RouteInfo) => {
   return (
-    <span><Icon className="sider-icon" type={route.icon}/>{route.title}</span>
+    <span><Icon className="sider-icon" type={route.icon}/>{route.text}</span>
   )
 }
 
@@ -48,15 +48,26 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
       if (route.role && !userRoles.some(role => role === route.role)) {
         return null
       }
-      return route.hasRoutes ? (
-        <Menu.SubMenu key={`sub${++subMenuIndex}`} title={renderTitle(route)}>
-          {route.routes.map(renderMenu)}
-        </Menu.SubMenu>
-      ) : (
-        <Menu.Item key={route.matchPath}>
-          {renderTitle(route)}
-        </Menu.Item>
-      )
+      switch (route.type) {
+        case 'Routes':
+          return (
+            <Menu.SubMenu key={`sub${++subMenuIndex}`} title={renderTitle(route)}>
+              {route.routes.map(renderMenu)}
+            </Menu.SubMenu>
+          )
+        case 'Route':
+          return (
+            <Menu.Item key={route.matchPath}>
+              {renderTitle(route)}
+            </Menu.Item>
+          )
+        default:
+          return (
+            <Menu.Item key={route.matchPath}>
+              {renderTitle(route)}
+            </Menu.Item>
+          )
+      }
     }
 
     return (
@@ -79,6 +90,7 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
           onClick={this.onClickItem}
         >
           {routes.map(renderMenu)}
+
         </Menu>
       </Layout.Sider>
     )
