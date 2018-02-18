@@ -31,7 +31,9 @@ export class AppFooter extends React.Component<{}, {}> {
         draft.viewModal = false
         if (draft.session.isLogged) {
           message.success(`您已成功登入`)
-          draft.reload && draft.reload.handle()
+        }
+        if (draft.reload) {
+          setTimeout(this.context.state.reload.handle)
         }
       } else {
         draft.submiting = false
