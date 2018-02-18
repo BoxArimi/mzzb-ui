@@ -59,19 +59,23 @@ export class AppFooter extends React.Component<{}, {}> {
             onOk={this.submitLogin}
             onCancel={this.hideLogin}
           >
-            <Input
-              id="login-username"
-              prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
-              placeholder="请输入用户名"
-              onPressEnter={() => (document.querySelector('#login-password') as HTMLInputElement).focus()}
-            />
-            <Input
-              id="login-password"
-              type="password"
-              prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
-              placeholder="请输入密码"
-              onPressEnter={this.submitLogin}
-            />
+            <div style={{padding: 10}}>
+              <Input
+                id="login-username"
+                prefix={<Icon type="user" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                placeholder="请输入用户名"
+                onPressEnter={() => (document.querySelector('#login-password') as HTMLInputElement).focus()}
+              />
+            </div>
+            <div style={{padding: 10}}>
+              <Input
+                id="login-password"
+                type="password"
+                prefix={<Icon type="key" style={{color: 'rgba(0,0,0,.25)'}}/>}
+                placeholder="请输入密码"
+                onPressEnter={this.submitLogin}
+              />
+            </div>
           </Modal>
         )}
       </Layout.Footer>
