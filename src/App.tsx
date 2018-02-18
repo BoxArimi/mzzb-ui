@@ -5,6 +5,7 @@ import './App.css'
 
 import { loginManager, Result } from './utils/manager'
 import * as Loadable from 'react-loadable'
+import { debounce } from 'lodash'
 import produce from 'immer'
 
 export interface Session {
@@ -22,7 +23,7 @@ export interface AppState {
   hideSider: boolean
   viewModal: boolean
   submiting: boolean
-  isMobile: boolean
+  bodyWidth: number
   session: Session
   reload?: Reload
 }
@@ -54,7 +55,7 @@ class App extends React.Component<{}, AppState> {
       hideSider: false,
       viewModal: false,
       submiting: false,
-      isMobile: window.innerWidth <= 768,
+      bodyWidth: window.innerWidth,
       session: {
         userName: 'Guest',
         isLogged: false,
@@ -95,9 +96,9 @@ class App extends React.Component<{}, AppState> {
       }
     })
 
-    window.onresize = this.throttle(100, () => {
+    window.onresize = debounce(() => {
       this.update(draft => {
-        draft.isMobile = window.innerWidth <= 768
+        draft.bodyWidth = window.innerWidth
       })
     })
   }

@@ -31,7 +31,7 @@ export class AppSider extends React.Component<RouteComponentProps<{}>, {}> {
       if (key !== location.pathname) {
         this.context.update((draft: AppState) => {
           draft.reload = undefined
-          draft.isMobile && (draft.hideSider = true)
+          draft.bodyWidth <= 600 && (draft.hideSider = true)
         })
         this.props.history.push(key)
       }

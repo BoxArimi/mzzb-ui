@@ -6,6 +6,7 @@
   "dependencies": {
     "antd": "^3.2.1",
     "immer": "^1.0.1",
+    "lodash.debounce": "^4.0.8",
     "md5": "^2.2.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
@@ -25,6 +26,7 @@
   "devDependencies": {
     "@types/antd": "^1.0.0",
     "@types/jest": "^22.1.2",
+    "@types/lodash.debounce": "^4.0.3",
     "@types/md5": "^2.1.32",
     "@types/node": "^9.4.5",
     "@types/prop-types": "^15.5.2",
